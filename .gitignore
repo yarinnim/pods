@@ -1,0 +1,15 @@
+/clickhouse/.env
+/ejabberd/.env
+/ejabberd/.obsidian
+/gitlab/.env
+/gitlab/.obsidian
+/harbor/.env
+/harbor/.obsidian
+/mongo/.env
+/penpot/.env
+/portainer/.env
+/postgres/.env
+/postgres/.env-standby
+/postgres/docker-entrypoint-initdb.d/.env
+/rabbitmq/.env
+/redis/.env
