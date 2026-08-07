@@ -1,0 +1,12 @@
+services:
+  logseq:
+    image: ghcr.io/logseq/logseq-webapp:latest
+    restart: unless-stopped
+    ports:
+      - "8081:80"   # HTTP access (Works on http://localhost only)
+      - "8443:443"  # HTTPS access (Required if accessing via private LAN/IP)
+networks:
+  logseq:
+    driver: overlay
+  backend:
+    driver: overlay

@@ -1,0 +1,39 @@
+version: "3.9"
+
+x-default-opts: &default-opts
+  logging:
+    options:
+      max-size: "100m"
+
+networks:
+  backend:
+    driver: overlay
+
+services:
+  rabbitmq:
+    <<: *default-opts
+    hostname: rabbitmq
+    networks:
+      - backend
+    image: "${RABBITMQ_IMAGE}"
+    environment:
+      - "RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}"
+      - "RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASS}"
+      - "RABBITMQ_DEFAULT_VHOST=${RABBITMQ_VHOST}"
+    ports:
+      - "${RABBITMQ_PORT}:5672"
+      - "${RABBITMQ_MANAGEMENT_PORT}:15672"
+    deploy:
+      update_config:
+        parallelism: 2
+        order: start-first
+        failure_action: rollback
+        delay: 10s
+      rollback_config:
+        parallelism: 0
+        order: stop-first
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+        window: 120s

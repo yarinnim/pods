@@ -1,0 +1,21 @@
+#! /usr/bin/bash
+
+set -e
+source ./.env
+
+export HOST_HTTP_PORT=${HOST_HTTP_PORT}
+export HOST_NATIVE_PORT=${HOST_NATIVE_PORT}
+export HOST_SECURE_NATIVE_PORT=${HOST_SECURE_NATIVE_PORT}
+export ADMIN_USERNAME=${ADMIN_USERNAME}
+export ADMIN_PASSWORD=${ADMIN_PASSWORD}
+export DATA_PATH=${DATA_PATH}
+export LOG_PATH=${LOG_PATH}
+
+mkdir -p "${LOG_PATH}"
+mkdir -p "${DATA_PATH}"
+
+echo "[DEPLOYING] Deploying the image as service"
+docker stack deploy --with-registry-auth \
+  --detach=true \
+  --resolve-image=always \
+  --compose-file docker-compose.yml common

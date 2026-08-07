@@ -1,0 +1,7 @@
+#!/bin/bash
+
+source .env
+
+createuser -U "${POSTGRES_USER}" --pwprompt \
+  --connection-limit 5 \
+  --replication "${REPLICA_USER}"

@@ -1,0 +1,2 @@
+REDISINSIGHT_PORT=5540
+REDISINSIGHT_DATA=/var/data/redisinsight

@@ -1,0 +1,21 @@
+#! /usr/bin/bash
+
+set -e
+source ./.env
+
+mkdir -p "${LOG_PATH}"
+mkdir -p "${CONF_PATH}"
+
+export HOST_HTTP_PORT=${HOST_HTTP_PORT}
+export HOST_HTTPS_PORT=${HOST_HTTPS_PORT}
+export LOG_PATH=${LOG_PATH}
+export CONF_PATH=${CONF_PATH}
+
+cp -rfv conf.d ${CONF_PATH}/.
+cp -rfv sites ${CONF_PATH}/.
+cp -rfv certs ${CONF_PATH}/.
+
+echo "[DEPLOYING] Deploying the image as service"
+docker stack deploy --with-registry-auth \
+  --resolve-image=always \
+  --compose-file docker-compose.yml common

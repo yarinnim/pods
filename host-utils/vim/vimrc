@@ -1,0 +1,126 @@
+set number relativenumber
+set nowrap "Nowrap for long line
+set t_Co=256 "Color type 256 colors
+set cursorline "Display line as current line
+set synmaxcol=0 "Max syntax highligh
+set colorcolumn=100
+set display=lastline "or truncat
+set clipboard=unnamedplus "Assign the system clipboard access by
+set encoding=UTF-8
+colorscheme gruvbox " tir_black | gruvbox
+set bg=dark " With with dark mode of gruvbox
+set tabstop=2 softtabstop=2 shiftwidth=2 expandtab "set tabstop at 2
+set list listchars=tab:❘\ ,trail:·,extends:»,precedes:«,nbsp:×
+set smartindent
+set autoindent
+
+" select highligh search and <space> to clear
+set hlsearch "highlight search result
+nnoremap <silent> <Space> :noh<CR>
+
+"dispable arrow key
+noremap <Up> <Nop>
+noremap <Down> <Nop>
+noremap <Left> <Nop>
+noremap <Right> <Nop>
+
+"set the indent character
+set foldmethod=manual
+nnoremap zf v%zf
+nnoremap zt vitzf
+autocmd BufWinLeave *.* mkview "save fold after save
+autocmd BufWinEnter *.* silent loadview "load fold
+
+" Auto indent
+nnoremap {>> vi{>>
+nnoremap }>> vi}>>
+
+" Shortcut
+set spell spelllang=en
+hi clear SpellBad
+hi SpellBad cterm=underline
+hi SpellBad gui=undercurl
+hi SpellCap cterm=underline ctermfg=red
+hi SpellBad cterm=underline ctermfg=red
+map <F7> :setlocal spell spelllang=en_gb<CR>
+
+nmap <F8> :TagbarToggle<CR>
+nnoremap <C-i> gg=G''
+nnoremap <C-a> ggvG
+noremap gf :tabe <cfile><CR>
+
+
+call plug#begin('~/.vim/plugged')
+" Language Server
+Plug 'prabirshrestha/vim-lsp'
+" Plug 'bling/vim-airline'
+Plug 'vim-airline/vim-airline'
+
+
+" Nerdtree colors and icons
+Plug 'preservim/nerdtree'
+Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
+Plug 'ryanoasis/vim-devicons'
+
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-surround'
+Plug 'easymotion/vim-easymotion' "\\w to start searching
+Plug 'markonm/traces.vim' "highligh and exec command :?word?;/to-word/s/search/replace
+Plug 'yggdroot/indentline' "Identation line
+
+" Code Completion
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'majutsushi/tagbar'
+
+" File browser
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } } 
+Plug 'junegunn/fzf.vim'
+Plug 'vim-scripts/taglist.vim' "Source code browser
+
+" For javascript
+Plug 'joegesualdo/jsdoc.vim'
+Plug 'dense-analysis/ale' "ESLint Plug
+Plug 'leafgarland/typescript-vim'
+Plug 'heavenshell/vim-jsdoc', {
+  \ 'for': ['javascript', 'javascript.jsx','typescript'],
+  \ 'do': 'make install'
+  \}
+
+" JSX
+Plug 'pangloss/vim-javascript'
+Plug 'maxmellon/vim-jsx-pretty'
+Plug 'jxnblk/vim-mdx-js'
+
+" For GO
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+
+" PHP
+" Ctrl + h To open the manual page in PHP.net (in your fav. browser)
+Plug 'alvan/vim-php-manual'
+
+" Dart and configuration
+Plug 'dart-lang/dart-vim-plugin'
+Plug 'natebosch/vim-lsc'
+Plug 'natebosch/vim-lsc-dart'
+Plug 'thosakwe/vim-flutter'
+
+call plug#end()
+
+let g:lsc_auto_map = v:true " Dart mapping
+
+set completeopt=menuone
+let g:airline#extensions#tabline#enabled = 1
+map <F2> :NERDTreeToggle<CR>
+let NERDTreeShowHidden=1
+
+let g:go_def_mode='gopls'
+let g:go_info_mode='gopls'
+let g:go_doc_popup_window = 1
+
+let g:indentLine_color_term = 239
+let g:vim_json_conceal=0
+
+" let g:markdown_syntax_conceal=0
+
+filetype indent on
+let g:closetag_enable_react_fragment = 0

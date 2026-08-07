@@ -1,0 +1,4 @@
+#!/bin/bash
+
+source .env
+pg_basebackup --host=${PRIMARY_HOST} -p 5432 -U${REPLICA_USER} -D /var/lib/postgresql/18/docker -Fp -Xs -R

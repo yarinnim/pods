@@ -1,0 +1,49 @@
+version: "3.9"
+
+x-default-opts: &default-opts
+  logging:
+    options:
+      max-size: "100m"
+
+networks:
+  keycloak:
+    driver: overlay
+  backend:
+    driver: overlay
+
+services:
+  keycloak:
+    <<: *default-opts
+    image: "${KEYCLOAK_IMAGE}"
+    
+    # command: start --proxy=edge --hostname=keycloak-test.qubehub.work
+    # command: start --proxy-headers=xforwarded --hostname=keycloak-test.qubehub.work
+    command: start
+    networks:
+      - keycloak
+      - backend
+    environment:
+      - KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN}
+      - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}
+      - KC_DB=${KEYCLOAK_DB_VENDOR}
+      - KC_DB_URL_HOST=${KEYCLOAK_DB_ADDR}
+      - KC_DB_URL_PORT=${KEYCLOAK_DB_PORT}
+      - KC_DB_URL_DATABASE=${KEYCLOAK_DB_DATABASE}
+      - KC_DB_USERNAME=${KEYCLOAK_DB_USER}
+      - KC_DB_PASSWORD=${KEYCLOAK_DB_PASSWORD}
+
+        # 1. Tell Keycloak it is behind a proxy
+      - KC_PROXY=edge
+      # 2. Set the official public URL (CRITICAL)
+      # KC_HOSTNAME=keycloak-test.qubehub.work
+      - KC_HOSTNAME_STRICT=false
+      # 3. Ensure it handles the forwarded headers correctly
+      - KC_HTTP_ENABLED=true
+      - KC_PROXY_HEADERS=xforwarded
+    
+    ports:
+      - "${KEYCLOAK_PORT}:8080"
+    deploy:
+      restart_policy:
+        condition: any
+

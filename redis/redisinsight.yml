@@ -1,0 +1,22 @@
+networks:
+  backend:
+    driver: overlay
+  redis:
+    driver: overlay
+
+services:
+  redisinsight:
+    image: redis/redisinsight:latest
+    hostname: redisinsight
+    ports:
+      - "${REDISINSIGHT_PORT}:5540"
+    volumes:
+      - ${REDISINSIGHT_DATA}:/db
+    environment:
+      RI_REDIS_URL: "redis://redis:6379"
+      RI_REDIS_PASSWORD: ${REDIS_PASSWORD}
+    depends_on:
+      - redis
+    networks:
+      - backend
+      - redis

@@ -1,0 +1,39 @@
+services:
+  registry:
+    image: registry:2
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      REGISTRY_STORAGE_DELETE_ENABLED: "true"
+      REGISTRY_AUTH: "htpasswd"
+      REGISTRY_AUTH_HTPASSWD_REALM: "Registry Realm"
+      REGISTRY_AUTH_HTPASSWD_PATH: "/auth/htpasswd"
+    volumes:
+      - ./data:/var/lib/registry
+      - ./auth:/auth:ro
+    networks:
+      - registry
+      - common_backend
+
+  registry-ui:
+    image: joxit/docker-registry-ui:latest
+    restart: always
+    ports:
+      - "8083:80"
+    environment:
+      REGISTRY_TITLE: "My Private Docker Registry"
+      SINGLE_REGISTRY: "true"
+      DELETE_IMAGES: "true"
+      NGINX_PROXY_PASS_URL: "http://registry:5000"
+    depends_on:
+      - registry
+    networks:
+      - registry
+      - common_backend
+
+networks:
+  registry:
+    driver: overlay
+  common_backend:
+    external: true

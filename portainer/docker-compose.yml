@@ -1,0 +1,19 @@
+networks:
+  portainer:
+    driver: overlay
+  backend:
+    driver: overlay
+
+services:
+  portainer:
+    image: ${PORTAINER_IMAGE}
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${PORTAINER_DATA}:/data
+    ports:
+      - ${PORTAINER_HTTP_PORT}:8000
+      - ${PORTAINER_HTTPS_PORT}:9443
+    networks:
+      - backend
+      - portainer

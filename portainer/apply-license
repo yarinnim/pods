@@ -1,0 +1,8 @@
+#! /usr/bin/bash
+#
+curl --location --request POST 'https://portainer-test.qubehub.work/api/licenses/add?force=true' \
+--header 'X-API-Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9' \
+--header 'Content-Type: application/json' \
+--data '{
+    "license_key": "3-qIiPWdYrTv7iR8LLmv8tZV8RhWZzCWgvbbg1R/uLLbR1tskduxCsbRfGrXAtd6Fqlytj3LdkO7MO1thL8+y1xNBYTldkprzEQ97r6UAgSEdxG3R26Q2W6NbxA1U="
+}'

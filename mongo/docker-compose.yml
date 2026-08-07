@@ -1,0 +1,30 @@
+version: "3.9"
+
+x-default-opts: &default-opts
+  logging:
+    options:
+      max-size: "100m"
+
+volumes:
+  alertmanager: {}
+  db-data:
+    driver: local
+  influx-data:
+    driver: local
+
+networks:
+  backend:
+    driver: overlay
+
+services:
+  mongo:
+    image: mongo
+    env_file: .env
+    hostname: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - ${MONGO_PATH}/db:/data/db
+      - ${MONGO_PATH}/configdb:/data/configdb
+    networks:
+      - backend

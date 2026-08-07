@@ -1,0 +1,42 @@
+networks:
+  gotenberg:
+    driver: overlay
+  backend:
+    driver: overlay
+
+services:
+  gotenberg:
+    image: gotenberg/gotenberg:8
+    # Gotenberg is stateless, so it doesn't strictly need volumes 
+    # unless you are providing custom fonts.
+    ports:
+      - "${GOTENBERG_PORT}:3000"
+    networks:
+      - backend
+      - gotenberg
+    environment:
+      # Optional: Disable specific modules if you want to harden security
+      # - GOTENBERG_DISABLE_GOOGLE_CHROME=false
+      # - GOTENBERG_DISABLE_LIBREOFFICE=false
+      
+      # Increase timeout if you are processing very large documents
+      - GOTENBERG_API_TIMEOUT=30s
+    volumes:
+      - ${GOTENBERG_FONTS_PATH}:/usr/local/share/fonts:ro
+    restart: unless-stopped
+    # It's recommended to limit resources as LibreOffice/Chrome can be heavy
+    #
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          memory: 512M
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s

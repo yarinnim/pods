@@ -1,0 +1,22 @@
+networks:
+  backend:
+    driver: overlay
+  redis:
+    driver: overlay
+
+services:
+  redis:
+    image: redis
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    hostname: redis
+    networks:
+      - backend
+      - redis
+    environment:
+      - REDIS_USERNAME=${REDIS_USERNAME}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    ports:
+      - "${REDIS_PORT}:6379"
+    volumes:
+      - ${REDIS_DATA}:/data
+      - ./tmp:/tmp

@@ -1,0 +1,6 @@
+services:
+  postgresql-standby:
+    command: sleep infinity
+    volumes:
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - ./.env-standby:/docker-entrypoint-initdb.d/.env

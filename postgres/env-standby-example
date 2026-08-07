@@ -1,0 +1,10 @@
+SERVICE_NAME=postgresql-standby
+POSTGRES_IMAGE=postgres:18.4-alpine
+POSTGRES_PORT=5433
+POSTGRES_VOLUME_PATH=/var/data/postgresql-standby
+POSTGRES_ARCHIVE_PATH=/var/data/postgresql-standby-archive
+POSTGRES_DUMP_PATH=./dump
+
+PRIMARY_HOST=common_postgresql
+PRIMARY_PORT=5432
+REPLICA_USER=user_replica

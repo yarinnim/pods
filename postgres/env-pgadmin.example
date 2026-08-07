@@ -1,0 +1,4 @@
+PGADMIN_DATA=/var/data/pgadmin
+PGADMIN_PORT=5050
+PGADMIN_EMAIL=admin@infinity.com
+PGADMIN_PASSWORD=admin@IFNT1

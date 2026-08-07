@@ -1,0 +1,20 @@
+#!/usr/bin/bash
+
+# set -e
+# source ./.env
+# wget https://github.com/goharbor/harbor/releases/download/v${HARBOR_VERSION}/harbor-offline-installer-v${HARBOR_VERSION}.tgz
+# tar xvf harbor-offline-installer-v${HARBOR_VERSION}.tgz
+
+# 1. Generate the list of variables present in .env ($VAR1,$VAR2,...)
+ENVS=$(awk -F= '!/^#/ && /=/ {printf "$%s,", $1}' .env | sed 's/,$//')
+echo ${ENVS}
+
+# 2. Export the .env variables to the current shell
+set -a
+source .env
+set +a
+
+# 3. Substitute only the variables defined in .env
+envsubst "$ENVS" < harbor.tmpl.yml > harbor/harbor.yml
+cd harbor
+./prepare

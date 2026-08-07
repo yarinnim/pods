@@ -1,0 +1,14 @@
+{
+  "name": "@mongo/mongosh",
+  "version": "1.0.0",
+  "description": "```bash $> db # Show current selected DB $> db <DATABASE_NAME> # Switch database",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.7"
+  }
+}

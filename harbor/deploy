@@ -1,0 +1,16 @@
+#! /usr/bin/bash
+
+set -e
+
+source ./.env
+
+mkdir -p ${HARBOR_DATA_PATH}
+mkdir -p ${HARBOR_LOG_PATH}
+
+export HARBOR_DATA_PATH=${HARBOR_DATA_PATH}
+export HARBOR_LOG_PATH=${HARBOR_LOG_PATH}
+
+echo "[INFO] Deploying as stack..."
+docker stack deploy --with-registry-auth \
+  --resolve-image=always \
+  --compose-file docker-compose.yml harbor

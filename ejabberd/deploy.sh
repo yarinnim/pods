@@ -1,0 +1,26 @@
+#!/usr/bin/bash
+
+source ./.env
+
+# Access configuration
+export EJABBERD_IMAGE=${EJABBERD_IMAGE}
+export EJABBERD_DOMAIN=${EJABBERD_DOMAIN}
+export EJABBERD_ADMIN_USER=${EJABBERD_ADMIN_USER}
+export EJABBERD_ADMIN_PASSWORD=${EJABBERD_ADMIN_PASSWORD}
+
+# Port configuration
+export EJABBERD_CLIENT_TO_SERVER_PORT=${EJABBERD_CLIENT_TO_SERVER_PORT}
+export EJABBERD_SERVER_TO_SERVER_PORT=${EJABBERD_SERVER_TO_SERVER_PORT}
+export EJABBERD_HTTP_PORT=${EJABBERD_HTTP_PORT}
+export EJABBERD_HTTPS_PORT=${EJABBERD_HTTPS_PORT}
+
+# Volume configuration
+export EJABBERD_DATABASE_PATH=${EJABBERD_DATABASE_PATH}
+export EJABBERD_LOGS_PATH=${EJABBERD_LOGS_PATH}
+export EJABBERD_CONF_PATH=${EJABBERD_CONF_PATH}
+export EJABBERD_UPLOAD_PATH=${EJABBERD_UPLOAD_PATH}
+
+# Deploy to Docker Swarm Stack
+docker stack deploy --with-registry-auth \
+  --resolve-image=always \
+  --compose-file docker-compose.yml common

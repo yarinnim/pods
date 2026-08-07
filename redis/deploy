@@ -1,0 +1,15 @@
+#! /usr/bin/bash
+
+source ./.env
+
+mkdir -p ${REDIS_DATA}
+mkdir -p tmp
+
+export REDIS_PORT=${REDIS_PORT}
+export REDIS_USERNAME=${REDIS_USERNAME}
+export REDIS_PASSWORD=${REDIS_PASSWORD}
+export REDIS_DATA=${REDIS_DATA}
+
+docker stack deploy --with-registry-auth \
+  --resolve-image=always \
+  --compose-file docker-compose.yml common

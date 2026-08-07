@@ -1,0 +1,42 @@
+networks:
+  stirling:
+    driver: overlay
+  backend:
+    driver: overlay
+
+services:
+  stirling-pdf:
+    image: stirlingtools/stirling-pdf:latest
+    restart: always
+    ports:
+      - "${STIRLING_PORT}:8080"
+    networks:
+      - backend
+      - stirling
+    volumes:
+      - ${STIRLING_OCR_PATH}:/usr/share/tessdata
+      - ${STIRLING_CONFIGS_PATH}:/configs
+      - ${STIRLING_LOGS_PATH}:/logs
+      - ${STIRLING_PIPELINE_PATH}:/pipeline
+    environment:
+      # --- Core Configuration ---
+      - SYSTEM_DEFAULTAPPCONFIG_APPURL=${STIRLING_BASE_URL}
+      - APP_URL=${STIRLING_BASE_URL}
+      - DOCKER_ENABLE_SECURITY=true
+      - INSTALL_BOOK_AND_ADVANCED_HTML_OPS=true # Set to true for advanced HTML/Book conversion
+      - LANGS=en_GB # Add more codes separated by commas for OCR (e.g., en_GB,de_DE)
+      - TZ=UTC
+      
+      # --- UI Personalization ---
+      - APP_NAME=${STIRLING_APP_NAME}
+      - APP_HOME_NAME=${STIRLING_APP_HOME_NAME}
+      - APP_NAVBAR_NAME=${STIRLING_APP_NAVBAR_NAME}
+      
+      # --- Security & Auth (Uncomment if DOCKER_ENABLE_SECURITY is true) ---
+      - SECURITY_ENABLE_LOGIN=true
+      - SECURITY_INIT_ADMIN_USERNAME=${STIRLING_USER}
+      - SECURITY_INIT_ADMIN_PASSWORD=${STIRLING_PASSORD}
+      
+      # --- Performance ---
+      # Increase memory limit if processing very large documents
+      - JAVA_OPTS=-Xmx2g 

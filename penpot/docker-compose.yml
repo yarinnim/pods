@@ -1,0 +1,52 @@
+networks:
+  penpot:
+    driver: overlay
+  common_backend:
+    external: true
+
+services:
+  penpot-backend:
+    image: penpotapp/backend:latest
+    networks:
+      - penpot
+      - common_backend
+    volumes:
+      - ${PENPOT_ASSETS_PATH}:/opt/data/assets
+    environment:
+      - PENPOT_DATABASE_URI=${PENPOT_DATABASE_URI}
+      - PENPOT_DATABASE_USERNAME=${PENPOT_DATABASE_USERNAME}
+      - PENPOT_DATABASE_PASSWORD=${PENPOT_DATABASE_PASSWORD}
+      - PENPOT_REDIS_URI=${PENPOT_REDIS_URI}
+
+      - PENPOT_SECRET_KEY=${PENPOT_SECRET_KEY}
+      - PENPOT_PUBLIC_URI=${PENPOT_PUBLIC_URI}
+
+      - PENPOT_OBJECTS_STORAGE_BACKEND=fs
+      - PENPOT_OBJECTS_STORAGE_FS_DIRECTORY=/opt/data/assets
+
+  penpot-frontend:
+    image: penpotapp/frontend:latest
+    ports:
+      - "8080:8080"
+    networks:
+      - penpot
+      - common_backend
+    depends_on:
+      - penpot-backend
+    volumes:
+      - ${PENPOT_ASSETS_PATH}:/opt/data/assets
+    environment:
+      - PENPOT_FLAGS=enable-registration enable-login-with-password
+      - PENPOT_BACKEND_URI=http://penpot-backend:6060
+      - PENPOT_PUBLIC_URI=${PENPOT_PUBLIC_URI}
+      - PENPOT_EXPORTER_URI=http://penpot-exporter:6061
+
+  penpot-exporter:
+    image: penpotapp/exporter:latest
+    networks:
+      - penpot
+      - common_backend
+    environment:
+      - PENPOT_SECRET_KEY=${PENPOT_SECRET_KEY}
+      - PENPOT_PUBLIC_URI=${PENPOT_PUBLIC_URI}
+      - PENPOT_REDIS_URI=${PENPOT_REDIS_URI}

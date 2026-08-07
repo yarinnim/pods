@@ -1,0 +1,28 @@
+x-default-opts: &default-opts
+  logging:
+    options:
+      max-size: "100m"
+
+networks:
+  postgres:
+    driver: overlay
+  backend:
+    driver: overlay
+
+services:
+  postgresql-standby:
+    image: ${POSTGRES_IMAGE}
+    volumes:
+      - ${POSTGRES_VOLUME_PATH}:/var/lib/postgresql
+      - ${POSTGRES_ARCHIVE_PATH}:/mnt/server/archive
+      - ${POSTGRES_DUMP_PATH}:/mnt/dump
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    ports:
+      - ${POSTGRES_PORT}:5432
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=admin@IFNT1
+    networks:
+      - backend
+      - postgres

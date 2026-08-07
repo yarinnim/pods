@@ -1,0 +1,35 @@
+#! /usr/bin/bash
+
+if [ -z "$1" ]; then
+  echo "Error: No Domain provided." >&2
+  echo "Usage: $0 <DOMAIN_NAME>"
+  exit 1
+fi
+
+# 2. Confirm the input (Y/N)
+DOMAIN=$1
+CERT_PATH="$(pwd)/certs"
+mkdir -p ${CERT_PATH}
+
+echo "Renewing Certificate for: ${DOMAIN}"
+read -p "Is the Domain correct? (y/n): " CONFIRM
+
+# 3. Handle the confirmation response
+case "$CONFIRM" in
+  [yY][eE][sS]|[yY])
+    echo "Renewing Certificate: $DOMAIN"
+    # Place your main script logic here
+    ;;
+  *)
+    echo "Operation canceled by user."
+    exit 0
+    ;;
+esac
+
+docker run --rm \
+  -v "$(pwd)/certs:/etc/letsencrypt" \
+  -v "common_webroot:/webroot" \
+  certbot/certbot certonly --webroot \
+  -w /webroot \
+  --cert-name ${DOMAIN} \
+  -d ${DOMAIN}
