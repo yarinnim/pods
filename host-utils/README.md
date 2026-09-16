@@ -25,5 +25,11 @@
 
 - Extention: https://github.com/neoclide/coc.nvim/wiki/Using-coc-extensions
 - Installation: 
-    - `:CocInstall coc-db coc-css coc-html coc-tsserver coc-json coc-markdownlint coc-eslint coc-highlight coc-sh coc-tabnine coc-tailwindcss3`
+    - `:CocInstall coc-db coc-css coc-html coc-tsserver coc-json coc-markdownlint coc-eslint coc-highlight coc-sh coc-tabnine`
     - `:CocInstall @yaegassy/coc-tailwindcss3`
+
+- To allow Enter to Auto complete
+
+" Make Enter accept the autocomplete suggestion if the popup menu is visible
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"
+
