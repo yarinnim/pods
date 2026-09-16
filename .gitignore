@@ -13,3 +13,4 @@
 /postgres/docker-entrypoint-initdb.d/.env
 /rabbitmq/.env
 /redis/.env
+/nginx/.env

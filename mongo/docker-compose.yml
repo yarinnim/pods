@@ -20,6 +20,10 @@ services:
   mongo:
     image: mongo
     env_file: .env
+    environment:
+      # Kernel 6.19–7.0.13 crashes TCMalloc per-CPU caches (SERVER-121912).
+      # Let glibc own rseq so mongod falls back to per-thread caches and starts.
+      GLIBC_TUNABLES: glibc.pthread.rseq=1
     hostname: mongo
     ports:
       - "27017:27017"
