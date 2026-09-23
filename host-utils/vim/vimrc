@@ -124,3 +124,4 @@ let g:vim_json_conceal=0
 
 filetype indent on
 let g:closetag_enable_react_fragment = 0
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"
