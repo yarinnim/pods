@@ -384,3 +384,19 @@ $> sudo docker exec CONTAINER_ID ejabberdctl reload_config
 ```bash
 $> echo -n "admin@ejabberd.localhost.com:admin@Secret1" | base64
 ```
+
+## Add new Virtual Host
+
+To add a new virtual host in ejabberd, you need to update your `ejabberd.yml` configuration file and restart the service. ejabberd allows you to host multiple virtual domains (e.g., `localhost`, `chat.example.com`, `domain2.com`) on a single server instance.
+
+```yml
+hosts
+  - HOST
+  - ejabberd.localhost.com
+```
+
+### Add new Admin to Virtual Host
+
+```bash
+$> ejabberdctl register admin ejabberd.localhost.com user_password
+```

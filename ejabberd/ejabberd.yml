@@ -41,9 +41,12 @@ sql_port: 5432
 sql_database: ejabberd_local
 sql_username: admin
 sql_password: admin@Secret1
+sql_keepalive_interval: 30
 default_db: sql
 auth_method: sql
 update_sql_schema: true
+oauth_access: all
+oauth_db_type: mnesia
 
 ## If you already have certificates, list them here
 # certfiles:

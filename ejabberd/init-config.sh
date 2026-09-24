@@ -27,9 +27,12 @@ sql_port: ${EJABBERD_DB_PORT}\\
 sql_database: ${EJABBERD_DB_NAME}\\
 sql_username: ${EJABBERD_DB_USERNAME}\\
 sql_password: ${EJABBERD_DB_PASSWORD}\\
+sql_keepalive_interval: 30\\
 default_db: sql\\
 auth_method: sql\\
-update_sql_schema: true
+update_sql_schema: true\\
+oauth_access: all\\
+oauth_db_type: mnesia
 " "${CONF_FILE}"
 
 # Force correct permissions for UID/GID 9000
