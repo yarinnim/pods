@@ -10,7 +10,7 @@ services:
     # Gotenberg is stateless, so it doesn't strictly need volumes 
     # unless you are providing custom fonts.
     ports:
-      - "${GOTENBERG_PORT}:3000"
+      - ${GOTENBERG_PORT}:3000
     networks:
       - backend
       - gotenberg

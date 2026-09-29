@@ -14,3 +14,6 @@
 /rabbitmq/.env
 /redis/.env
 /nginx/.env
+/gotenberg/.env
+/nginx/.Dockerfile.swp
+/gotenberg/invoice.pdf

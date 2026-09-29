@@ -1,13 +1,7 @@
 FROM nginx:alpine
 
-COPY ./nginx.conf /etc/nginx/nginx.conf
-
-RUN apk update \
-  && apk upgrade \
-  && apk --update add logrotate \
-  && apk add --no-cache openssl \
-  && apk add --no-cache bash \
-  && apk add --no-cache curl
+RUN apk update && apk upgrade \
+  && apk --update add logrotate openssl bash curl
 
 RUN set -x ; \
     addgroup -g 82 -S www-data ; \
@@ -17,6 +11,8 @@ RUN set -x ; \
 RUN touch /var/log/messages
 
 # Copy 'logrotate' config file
+COPY ./nginx.conf /etc/nginx/nginx.conf
+COPY ./sites/README.md /etc/nginx/README.md
 COPY logrotate/nginx /etc/logrotate.d/
 
 # Set upstream conf and remove the default conf
