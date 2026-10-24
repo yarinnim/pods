@@ -80,6 +80,12 @@ services:
       - ${CONF_PATH}/certs:/etc/nginx/certs:ro
 ```
 
-### Bring the website up
+### Renew the Certificate
 
-To bring
+To renew the certificate, to the root directory of the folder that store the certbot certificates
+and run the `renew-certificate` as the follwoing:
+
+```bash
+$> cd /home/www/nginx-conf
+$> sudo ../pods/nginx/certbot/renew-certificate registry.mydomain.com
+```

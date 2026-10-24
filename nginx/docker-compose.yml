@@ -19,6 +19,7 @@ services:
     volumes:
       - ./ssl/:/etc/nginx/ssl
       - nginx-cache:/var/www:cached
+      - /home/wwwroot/experimental/apps/php-fpm:/var/www/php-fpm:ro
       - webroot:/usr/share/nginx/html
       - ${LOG_PATH}:/var/log/nginx
       - ${CONF_PATH}/sites:/etc/nginx/sites
