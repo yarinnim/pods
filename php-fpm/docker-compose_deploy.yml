@@ -1,0 +1,10 @@
+services:
+  {SERVICE_NAME}:
+    volumes:
+      - ./tmp:/tmp
+      - ./supervisord.conf:/etc/supervisord.conf:ro
+      - ./supervisor.d/worker.ini:/etc/supervisor.d/worker.ini:ro
+      - ./worker-entrypoint.sh:/usr/local/bin/worker-entrypoint:ro
+      - ./php/conf.d/zz-app.ini:/usr/local/etc/php/conf.d/zz-app.ini:ro
+      - .:/var/www
+      - .env:/var/www/.env
