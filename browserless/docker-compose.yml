@@ -1,0 +1,93 @@
+x-default-opts: &default-opts
+  logging:
+    options:
+      max-size: "100m"
+
+networks:
+  browserless:
+    driver: overlay
+  backend:
+    driver: overlay
+
+services:
+  {SERVICE_NAME}:
+    <<: *default-opts
+    image: ${BROWSERLESS_IMAGE}
+    volumes:
+      - ${BROWSERLESS_DATA_PATH}:${DATA_DIR}
+      - ${BROWSERLESS_DOWNLOADS_PATH}:${DOWNLOAD_DIR}
+      - ${BROWSERLESS_SCRATCH_PATH}:${SCRATCH_DIR}
+      - ${BROWSERLESS_METRICS_PATH}:/metrics
+      - ${BROWSERLESS_FONTS_PATH}:/usr/share/fonts/custom:ro
+      - .env:/config/browserless.env:ro
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      # Docker's default /dev/shm is 64MB and Chrome crashes under load.
+      - type: tmpfs
+        target: /dev/shm
+        tmpfs:
+          size: 2147483648
+    ports:
+      - ${BROWSERLESS_PORT}:3000
+    environment:
+      HOST: ${HOST}
+      PORT: ${PORT}
+      EXTERNAL: ${EXTERNAL}
+      TZ: ${TZ}
+      TOKEN: ${TOKEN}
+      STRICT_TOKEN_USE: ${STRICT_TOKEN_USE}
+      CONCURRENT: ${CONCURRENT}
+      QUEUED: ${QUEUED}
+      TIMEOUT: ${TIMEOUT}
+      RETRIES: ${RETRIES}
+      HEARTBEAT_INTERVAL: ${HEARTBEAT_INTERVAL}
+      DATA_DIR: ${DATA_DIR}
+      DOWNLOAD_DIR: ${DOWNLOAD_DIR}
+      SCRATCH_DIR: ${SCRATCH_DIR}
+      METRICS_JSON_PATH: ${METRICS_JSON_PATH}
+      CORS: ${CORS}
+      CORS_ALLOW_ORIGIN: "${CORS_ALLOW_ORIGIN}"
+      CORS_ALLOW_METHODS: "${CORS_ALLOW_METHODS}"
+      CORS_ALLOW_HEADERS: "${CORS_ALLOW_HEADERS}"
+      CORS_ALLOW_CREDENTIALS: ${CORS_ALLOW_CREDENTIALS}
+      CORS_EXPOSE_HEADERS: "${CORS_EXPOSE_HEADERS}"
+      CORS_MAX_AGE: ${CORS_MAX_AGE}
+      ALLOW_GET: ${ALLOW_GET}
+      ALLOW_FILE_PROTOCOL: ${ALLOW_FILE_PROTOCOL}
+      DISABLE_BLOCKLIST: ${DISABLE_BLOCKLIST}
+      MAX_PAYLOAD_SIZE: ${MAX_PAYLOAD_SIZE}
+      HEALTH: ${HEALTH}
+      MAX_CPU_PERCENT: ${MAX_CPU_PERCENT}
+      MAX_MEMORY_PERCENT: ${MAX_MEMORY_PERCENT}
+      MACHINE_STATS_SOURCE: ${MACHINE_STATS_SOURCE}
+      CPU_SAMPLE_INTERVAL_MS: ${CPU_SAMPLE_INTERVAL_MS}
+      CPU_EMA_ALPHA: ${CPU_EMA_ALPHA}
+      CPU_OVERLOAD_HYSTERESIS: ${CPU_OVERLOAD_HYSTERESIS}
+      DEBUG: "${DEBUG}"
+      LOG_LEVEL: ${LOG_LEVEL}
+      LOG_FORMAT: ${LOG_FORMAT}
+      ENABLE_DEBUGGER: ${ENABLE_DEBUGGER}
+      OTEL_ENABLED: ${OTEL_ENABLED}
+    networks:
+      - backend
+      - browserless
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS \"http://127.0.0.1:$${PORT}/pressure?token=$$TOKEN\" -o /dev/null"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      restart_policy:
+        condition: any
+        delay: 5s
+      resources:
+        # Cgroup caps. Past these, this container is throttled or killed
+        # and the other containers on the node keep their CPU and memory.
+        limits:
+          cpus: "2.0"
+          memory: 6G
+          pids: 256
+        reservations:
+          cpus: "0.5"
+          memory: 1G

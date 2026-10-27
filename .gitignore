@@ -17,3 +17,4 @@
 /gotenberg/.env
 /nginx/.Dockerfile.swp
 /gotenberg/invoice.pdf
+/browserless/.env

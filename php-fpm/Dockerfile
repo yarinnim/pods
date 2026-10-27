@@ -27,6 +27,9 @@ RUN apk add --no-cache \
   && mkdir -p /etc/supervisor.d \
   && cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
+# Browsershot drives Puppeteer from this container and connects to Browserless.
+# RUN apk add --no-cache nodejs npm && PUPPETEER_SKIP_DOWNLOAD=true npm install -g puppeteer
+
 COPY ./php/conf.d/zz-app.ini "$PHP_INI_DIR/conf.d/zz-app.ini"
 COPY ./supervisord.conf /etc/supervisord.conf
 COPY ./supervisor.d/worker.ini /etc/supervisor.d/worker.ini
