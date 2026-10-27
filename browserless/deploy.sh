@@ -4,11 +4,6 @@ set -e
 
 source ./.env
 
-# Timezone comes from the host, not this service.
-if [ -z "${TZ:-}" ]; then
-  TZ="$(tr -d '[:space:]' < /etc/timezone)"
-fi
-
 mkdir -p ${BROWSERLESS_DATA_PATH}
 mkdir -p ${BROWSERLESS_DOWNLOADS_PATH}
 mkdir -p ${BROWSERLESS_SCRATCH_PATH}
@@ -32,7 +27,6 @@ export BROWSERLESS_FONTS_PATH=${BROWSERLESS_FONTS_PATH}
 export HOST=${HOST}
 export PORT=${PORT}
 export EXTERNAL=${EXTERNAL}
-export TZ=${TZ}
 export TOKEN=${TOKEN}
 export STRICT_TOKEN_USE=${STRICT_TOKEN_USE}
 export CONCURRENT=${CONCURRENT}

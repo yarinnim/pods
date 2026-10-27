@@ -130,7 +130,7 @@ Allow about 1 GiB of RAM for each concurrent Chrome, on top of the 2 GiB of shar
 
 ## Timezone
 
-`TZ` is not set in `env.example`. `deploy.sh` reads `/etc/timezone` on the host and passes that value in. The container also mounts `/etc/localtime` and `/etc/timezone`.
+`deploy.sh` does not set `TZ`. The container mounts `/etc/localtime` and `/etc/timezone`, so it follows the host timezone.
 
 ## Configuration
 

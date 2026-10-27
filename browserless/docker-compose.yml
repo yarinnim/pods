@@ -33,7 +33,6 @@ services:
       HOST: ${HOST}
       PORT: ${PORT}
       EXTERNAL: ${EXTERNAL}
-      TZ: ${TZ}
       TOKEN: ${TOKEN}
       STRICT_TOKEN_USE: ${STRICT_TOKEN_USE}
       CONCURRENT: ${CONCURRENT}
