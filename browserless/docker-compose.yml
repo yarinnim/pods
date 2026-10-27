@@ -20,11 +20,11 @@ services:
       - ${BROWSERLESS_METRICS_PATH}:/metrics
       - ${BROWSERLESS_FONTS_PATH}:/usr/share/fonts/custom:ro
       - .env:/config/browserless.env:ro
-      # Docker's default /dev/shm is 64MB and Chrome crashes under load.
+      # Counts toward the 1536M memory limit. 384 MiB leaves the rest for one Chrome.
       - type: tmpfs
         target: /dev/shm
         tmpfs:
-          size: 2147483648
+          size: 402653184
     ports:
       - ${BROWSERLESS_PORT}:3000
     environment:
@@ -79,12 +79,12 @@ services:
         condition: any
         delay: 5s
       resources:
-        # Cgroup caps. Past these, this container is throttled or killed
-        # and the other containers on the node keep their CPU and memory.
+        # Host is 2 CPUs and 4 GiB. This service keeps one core and 1.5 GiB
+        # so the OS and the other containers still have the rest.
         limits:
-          cpus: "2.0"
-          memory: 6G
-          pids: 256
+          cpus: "1.0"
+          memory: 1536M
+          pids: 128
         reservations:
-          cpus: "0.5"
-          memory: 1G
+          cpus: "0.25"
+          memory: 256M

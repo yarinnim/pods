@@ -100,17 +100,17 @@ All of these accept `?token=TOKEN`.
 
 | Limit | Where | Value |
 |---|---|---|
-| Shared memory `/dev/shm` | `docker-compose.yml` | 2 GiB. Docker's 64 MiB default crashes Chrome. |
-| CPU | `docker-compose.yml` | 2 CPUs max, 0.5 reserved. Extra CPU demand is throttled inside this container. |
-| Memory | `docker-compose.yml` | 6 GiB max, 1 GiB reserved. The 2 GiB shared memory is part of the 6 GiB. Past the cap, Swarm kills this container only. |
-| Processes | `docker-compose.yml` | 256. Stops a Chrome fork storm from exhausting the host. |
+| Shared memory `/dev/shm` | `docker-compose.yml` | 384 MiB. This sits inside the 1536 MiB memory cap. |
+| CPU | `docker-compose.yml` | 1 of the host's 2 CPUs, 0.25 reserved. Extra CPU demand is throttled inside this container. |
+| Memory | `docker-compose.yml` | 1536 MiB of the host's 4 GiB, 256 MiB reserved. Past the cap, Swarm kills this container only. |
+| Processes | `docker-compose.yml` | 128. Stops a Chrome fork storm from exhausting the host. |
 | Restart | `docker-compose.yml` | Swarm restarts the task on any exit, after 5 seconds. |
-| Concurrent sessions | `CONCURRENT` | 5 running Chrome processes. |
-| Queue | `QUEUED` | 10 waiting requests, then new calls get `429`. |
-| Session lifetime | `TIMEOUT` | 30000 ms. `-1` disables the timer. |
-| Overload | `HEALTH` | Above 90% CPU or memory, new sessions get `503`. |
+| Concurrent sessions | `CONCURRENT` | 1 running Chrome process. |
+| Queue | `QUEUED` | 2 waiting requests, then new calls get `429`. |
+| Session lifetime | `TIMEOUT` | 60000 ms. `-1` disables the timer. |
+| Overload | `HEALTH` | Above 75% of the 1536 MiB cap, new sessions get `503`. CPU is not used as a trip point, because one Chrome already fills the single core. |
 
-Allow about 1 GiB of RAM for each concurrent Chrome, on top of the 2 GiB of shared memory. Five sessions on a 6 GiB cap is the top of that budget. To run more, raise the memory limit and `CONCURRENT` together, then redeploy.
+The host has 2 CPUs and 4 GiB. This service uses at most 1 CPU and 1536 MiB, which leaves a core and about 2.5 GiB for the OS and the other containers. One Chrome session fits after 384 MiB is used for shared memory. To run more, raise the memory limit and `CONCURRENT` together, then redeploy.
 
 `MACHINE_STATS_SOURCE=cgroup` makes the health check use the container limit, so a busy host does not look like a full container.
 
@@ -158,10 +158,10 @@ Defined in `env.example`. `.env` is only a symlink to it. Quotes are required wh
 
 | Variable | Default | Description |
 |---|---|---|
-| `CONCURRENT` | `5` | Maximum Chrome sessions running at once. Further requests wait. |
-| `QUEUED` | `10` | Maximum waiting requests. Above this, the response is `429`. |
-| `TIMEOUT` | `30000` | Session limit in milliseconds. `-1` means no limit, and the caller must close the browser. |
-| `RETRIES` | `5` | Launch retries. |
+| `CONCURRENT` | `1` | Maximum Chrome sessions running at once. Further requests wait. |
+| `QUEUED` | `2` | Maximum waiting requests. Above this, the response is `429`. |
+| `TIMEOUT` | `60000` | Session limit in milliseconds. `-1` means no limit, and the caller must close the browser. |
+| `RETRIES` | `2` | Launch retries. |
 | `HEARTBEAT_INTERVAL` | `30000` | WebSocket heartbeat interval in milliseconds. Lower it behind a proxy that drops idle connections. |
 
 ### Storage
@@ -196,8 +196,8 @@ These are paths inside the container. They must match the volume targets in `doc
 | Variable | Default | Description |
 |---|---|---|
 | `HEALTH` | `true` | Refuse new sessions when CPU or memory is over the limit. |
-| `MAX_CPU_PERCENT` | `90` | CPU threshold. Used when `HEALTH=true`. |
-| `MAX_MEMORY_PERCENT` | `90` | Memory threshold. Used when `HEALTH=true`. |
+| `MAX_CPU_PERCENT` | `100` | CPU threshold. `100` keeps a single busy core from refusing work. |
+| `MAX_MEMORY_PERCENT` | `75` | Memory threshold. Used when `HEALTH=true`. |
 | `MACHINE_STATS_SOURCE` | `cgroup` | `cgroup` uses the container limit. Also `host` or `auto`. |
 | `CPU_SAMPLE_INTERVAL_MS` | `1000` | How often CPU is sampled. |
 | `CPU_EMA_ALPHA` | `0.3` | Weight of a new CPU sample in the moving average. |
@@ -207,10 +207,10 @@ These are paths inside the container. They must match the volume targets in `doc
 
 | Variable | Default | Description |
 |---|---|---|
-| `DEBUG` | `browserless*,-**:verbose` | Debug namespaces. `*` is very noisy. `-*` turns them off. |
+| `DEBUG` | `-*` | Debug namespaces. `*` is very noisy. `-*` turns them off. |
 | `LOG_LEVEL` | `info` | `trace`, `debug`, `info`, `warn`, `error`, `fatal`, or `silent`. |
 | `LOG_FORMAT` | `plain` | `json` for log collectors. |
-| `ENABLE_DEBUGGER` | `true` | Serve the session debugger. |
+| `ENABLE_DEBUGGER` | `false` | Serve the session debugger. Off keeps that UI out of the 1536 MiB cap. |
 | `OTEL_ENABLED` | `false` | OpenTelemetry export. Set the collector endpoint in the environment when this is `true`. |
 
 ## Logs
