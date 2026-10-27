@@ -124,13 +124,8 @@ Allow about 1 GiB of RAM for each concurrent Chrome, on top of the 2 GiB of shar
 | `BROWSERLESS_METRICS_PATH` | `/metrics` | `metrics.json` survives restarts. |
 | `BROWSERLESS_FONTS_PATH` | `/usr/share/fonts/custom` | Extra fonts. Drop files in `./fonts` and redeploy. |
 | `.env` → `env.example` | `/config/browserless.env` | The settings file, read-only. |
-| `/etc/localtime`, `/etc/timezone` | same paths | Host timezone. |
 
 `deploy.sh` creates the data directories and makes them writable by uid `999`, which is the user inside the image. The image does not create those directories itself.
-
-## Timezone
-
-`deploy.sh` does not set `TZ`. The container mounts `/etc/localtime` and `/etc/timezone`, so it follows the host timezone.
 
 ## Configuration
 

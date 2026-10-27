@@ -20,8 +20,6 @@ services:
       - ${BROWSERLESS_METRICS_PATH}:/metrics
       - ${BROWSERLESS_FONTS_PATH}:/usr/share/fonts/custom:ro
       - .env:/config/browserless.env:ro
-      - /etc/localtime:/etc/localtime:ro
-      - /etc/timezone:/etc/timezone:ro
       # Docker's default /dev/shm is 64MB and Chrome crashes under load.
       - type: tmpfs
         target: /dev/shm
