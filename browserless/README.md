@@ -100,17 +100,17 @@ All of these accept `?token=TOKEN`.
 
 | Limit | Where | Value |
 |---|---|---|
-| Shared memory `/dev/shm` | `docker-compose.yml` | 384 MiB. This sits inside the 1536 MiB memory cap. |
-| CPU | `docker-compose.yml` | 1 of the host's 2 CPUs, 0.25 reserved. Extra CPU demand is throttled inside this container. |
-| Memory | `docker-compose.yml` | 1536 MiB of the host's 4 GiB, 256 MiB reserved. Past the cap, Swarm kills this container only. |
-| Processes | `docker-compose.yml` | 128. Stops a Chrome fork storm from exhausting the host. |
+| Shared memory `/dev/shm` | `docker-compose.yml` | 512 MiB. This sits inside the 2560 MiB memory cap. |
+| CPU | `docker-compose.yml` | 2 CPUs max, 0.5 reserved. A page can use both cores instead of stalling on one. |
+| Memory | `docker-compose.yml` | 2560 MiB of the host's 4 GiB, 512 MiB reserved. Past the cap, Swarm kills this container only. |
+| Processes | `docker-compose.yml` | 256. Stops a Chrome fork storm from exhausting the host. |
 | Restart | `docker-compose.yml` | Swarm restarts the task on any exit, after 5 seconds. |
 | Concurrent sessions | `CONCURRENT` | 1 running Chrome process. |
 | Queue | `QUEUED` | 2 waiting requests, then new calls get `429`. |
-| Session lifetime | `TIMEOUT` | 60000 ms. `-1` disables the timer. |
-| Overload | `HEALTH` | Above 75% of the 1536 MiB cap, new sessions get `503`. CPU is not used as a trip point, because one Chrome already fills the single core. |
+| Session lifetime | `TIMEOUT` | 300000 ms. `-1` disables the timer. |
+| Overload | `HEALTH` | Above 75% of the 2560 MiB cap, new sessions get `503`. |
 
-The host has 2 CPUs and 4 GiB. This service uses at most 1 CPU and 1536 MiB, which leaves a core and about 2.5 GiB for the OS and the other containers. One Chrome session fits after 384 MiB is used for shared memory. To run more, raise the memory limit and `CONCURRENT` together, then redeploy.
+The host has 2 CPUs and 4 GiB. This service may use both cores and at most 2560 MiB, which leaves about 1.5 GiB for the OS and the other containers. One Chrome session fits after 512 MiB is used for shared memory. The session timer is 5 minutes (`TIMEOUT=300000`). To run more, raise the memory limit and `CONCURRENT` together, then redeploy.
 
 `MACHINE_STATS_SOURCE=cgroup` makes the health check use the container limit, so a busy host does not look like a full container.
 
@@ -160,7 +160,7 @@ Defined in `env.example`. `.env` is only a symlink to it. Quotes are required wh
 |---|---|---|
 | `CONCURRENT` | `1` | Maximum Chrome sessions running at once. Further requests wait. |
 | `QUEUED` | `2` | Maximum waiting requests. Above this, the response is `429`. |
-| `TIMEOUT` | `60000` | Session limit in milliseconds. `-1` means no limit, and the caller must close the browser. |
+| `TIMEOUT` | `300000` | Session limit in milliseconds. `-1` means no limit, and the caller must close the browser. |
 | `RETRIES` | `2` | Launch retries. |
 | `HEARTBEAT_INTERVAL` | `30000` | WebSocket heartbeat interval in milliseconds. Lower it behind a proxy that drops idle connections. |
 
@@ -210,7 +210,7 @@ These are paths inside the container. They must match the volume targets in `doc
 | `DEBUG` | `-*` | Debug namespaces. `*` is very noisy. `-*` turns them off. |
 | `LOG_LEVEL` | `info` | `trace`, `debug`, `info`, `warn`, `error`, `fatal`, or `silent`. |
 | `LOG_FORMAT` | `plain` | `json` for log collectors. |
-| `ENABLE_DEBUGGER` | `false` | Serve the session debugger. Off keeps that UI out of the 1536 MiB cap. |
+| `ENABLE_DEBUGGER` | `false` | Serve the session debugger. Off keeps that UI out of the memory cap. |
 | `OTEL_ENABLED` | `false` | OpenTelemetry export. Set the collector endpoint in the environment when this is `true`. |
 
 ## Logs

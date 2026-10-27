@@ -20,11 +20,11 @@ services:
       - ${BROWSERLESS_METRICS_PATH}:/metrics
       - ${BROWSERLESS_FONTS_PATH}:/usr/share/fonts/custom:ro
       - .env:/config/browserless.env:ro
-      # Counts toward the 1536M memory limit. 384 MiB leaves the rest for one Chrome.
+      # Counts toward the 2560M memory limit. 512 MiB leaves the rest for Chrome.
       - type: tmpfs
         target: /dev/shm
         tmpfs:
-          size: 402653184
+          size: 536870912
     ports:
       - ${BROWSERLESS_PORT}:3000
     environment:
@@ -79,12 +79,12 @@ services:
         condition: any
         delay: 5s
       resources:
-        # Host is 2 CPUs and 4 GiB. This service keeps one core and 1.5 GiB
-        # so the OS and the other containers still have the rest.
+        # Host is 2 CPUs and 4 GiB. Chrome may use both cores while a page
+        # renders, and at most 2.5 GiB, so the rest of the machine still fits.
         limits:
-          cpus: "1.0"
-          memory: 1536M
-          pids: 128
+          cpus: "2.0"
+          memory: 2560M
+          pids: 256
         reservations:
-          cpus: "0.25"
-          memory: 256M
+          cpus: "0.5"
+          memory: 512M
