@@ -105,12 +105,12 @@ All of these accept `?token=TOKEN`.
 | Memory | `docker-compose.yml` | 2560 MiB of the host's 4 GiB, 512 MiB reserved. Past the cap, Swarm kills this container only. |
 | Processes | `docker-compose.yml` | 256. Stops a Chrome fork storm from exhausting the host. |
 | Restart | `docker-compose.yml` | Swarm restarts the task on any exit, after 5 seconds. |
-| Concurrent sessions | `CONCURRENT` | 1 running Chrome process. |
-| Queue | `QUEUED` | 2 waiting requests, then new calls get `429`. |
+| Concurrent sessions | `CONCURRENT` | 2 running Chrome processes. This is the v2 name for `MAX_CONCURRENT_CHROME`. |
+| Queue | `QUEUED` | 10 waiting requests, then new calls get `429`. This is the v2 name for `MAX_QUEUE_COUNT`. |
 | Session lifetime | `TIMEOUT` | 300000 ms. `-1` disables the timer. |
 | Overload | `HEALTH` | Above 75% of the 2560 MiB cap, new sessions get `503`. |
 
-The host has 2 CPUs and 4 GiB. This service may use both cores and at most 2560 MiB, which leaves about 1.5 GiB for the OS and the other containers. One Chrome session fits after 512 MiB is used for shared memory. The session timer is 5 minutes (`TIMEOUT=300000`). To run more, raise the memory limit and `CONCURRENT` together, then redeploy.
+The host has 2 CPUs and 4 GiB. This service may use both cores and at most 2560 MiB, which leaves about 1.5 GiB for the OS and the other containers. `CONCURRENT=2` allows two Chrome processes inside that cap. The session timer is 5 minutes (`TIMEOUT=300000`).
 
 `MACHINE_STATS_SOURCE=cgroup` makes the health check use the container limit, so a busy host does not look like a full container.
 
@@ -158,8 +158,8 @@ Defined in `env.example`. `.env` is only a symlink to it. Quotes are required wh
 
 | Variable | Default | Description |
 |---|---|---|
-| `CONCURRENT` | `1` | Maximum Chrome sessions running at once. Further requests wait. |
-| `QUEUED` | `2` | Maximum waiting requests. Above this, the response is `429`. |
+| `CONCURRENT` | `2` | Maximum Chrome sessions running at once. Further requests wait. Replaces v1 `MAX_CONCURRENT_CHROME`. |
+| `QUEUED` | `10` | Maximum waiting requests. Above this, the response is `429`. Replaces v1 `MAX_QUEUE_COUNT`. |
 | `TIMEOUT` | `300000` | Session limit in milliseconds. `-1` means no limit, and the caller must close the browser. |
 | `RETRIES` | `2` | Launch retries. |
 | `HEARTBEAT_INTERVAL` | `30000` | WebSocket heartbeat interval in milliseconds. Lower it behind a proxy that drops idle connections. |
@@ -189,7 +189,7 @@ These are paths inside the container. They must match the volume targets in `doc
 | `ALLOW_GET` | `false` | Allow GET requests that carry a JSON body in the query string. |
 | `ALLOW_FILE_PROTOCOL` | `false` | Allow pages to open `file://` URLs. |
 | `DISABLE_BLOCKLIST` | `false` | When `true`, Chrome may navigate to localhost, private addresses, and cloud metadata endpoints. |
-| `MAX_PAYLOAD_SIZE` | `10485760` | Largest accepted request body, in bytes (10 MiB). |
+| `MAX_PAYLOAD_SIZE` | `104857600` | Largest accepted request body, in bytes (100 MiB). Matches the Nginx `client_max_body_size`. |
 
 ### Health
 
