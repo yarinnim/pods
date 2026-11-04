@@ -18,3 +18,5 @@
 /nginx/.Dockerfile.swp
 /gotenberg/invoice.pdf
 /browserless/.env
+/postgres/.env-pgadmin.example.swp
+/postgres/.env-pgadmin

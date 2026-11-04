@@ -33,3 +33,23 @@ is small and is kept on purpose.
   exif pcntl bcmath gd pdo_pgsql pgsql \
 && docker-php-source delete \
 ```
+
+## Build and Deploy
+
+How it works, the request is handled by Nginx and Nginx forward the request to PHP-FPM to execute
+the requested script file. So, we need to make sure the project folder is mounted at the nginx
+and PHP-FPM service.
+
+After the service up and running, you need get into the container and change the permission
+as the following:
+
+```bash
+$> sudo docker exec -it CONTAINER_ID sh
+$> chown -R www-data:www-data storage bootstrap/cache
+$> chmod -R 755 storage bootstrap/cache
+```
+
+## Check List
+
+- Make sure the certificate is correct if you need to have sign certificate
+- Make sure the `APP_KEY` in the .env is set correctly.
