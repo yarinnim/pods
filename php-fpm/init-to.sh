@@ -3,9 +3,9 @@
 set -e
 
 if [ "$#" -ne 1 ]; then
-    echo "Error: PHP Project destination folder path required."
-    echo "Usage: $0 /path/to/php-project"
-    exit 1
+  echo "Error: PHP Project destination folder path required."
+  echo "Usage: $0 /path/to/php-project"
+  exit 1
 fi
 
 DEST=$1

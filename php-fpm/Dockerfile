@@ -16,6 +16,8 @@ RUN apk add --no-cache \
   && mkdir -p /etc/supervisor.d \
   && cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
 COPY ./php/conf.d/zz-app.ini "$PHP_INI_DIR/conf.d/zz-app.ini"
 COPY ./supervisord.conf /etc/supervisord.conf
 COPY ./supervisor.d/worker.ini /etc/supervisor.d/worker.ini
