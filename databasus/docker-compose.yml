@@ -1,0 +1,27 @@
+networks:
+  backend:
+    driver: overlay
+  databasus:
+    driver: overlay
+
+services:
+  databasus:
+    image: databasus/databasus:latest
+    networks:
+      - backend
+      - databasus
+    ports:
+      - "${DATABASUS_PORT}:4005"
+    env_file:
+      - .env
+    volumes:
+      - ${DATABASUS_DATA_PATH}:/databasus-data
+    healthcheck:
+      test: ["CMD", "databasus", "healthcheck"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+    deploy:
+      restart_policy:
+        condition: any

@@ -1,0 +1,14 @@
+#! /usr/bin/bash
+
+set -e
+source ./.env
+
+mkdir -p "${OPENVPN_DATA_PATH}"
+
+export OPENVPN_PORT=${OPENVPN_PORT}
+export OPENVPN_DATA_PATH=${OPENVPN_DATA_PATH}
+
+echo "[DEPLOYING] Deploying the image as service"
+docker stack deploy --with-registry-auth \
+  --resolve-image=always \
+  --compose-file docker-compose.yml common

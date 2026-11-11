@@ -1,0 +1,13 @@
+networks:
+  backend:
+    driver: overlay
+services:
+  openvpn:
+    image: kylemanna/openvpn:latest
+    restart: unless-stopped
+    networks:
+      - backend
+    ports:
+      - "${OPENVPN_PORT}:1194/udp"
+    volumes:
+      - ${OPENVPN_DATA_PATH}:/etc/openvpn

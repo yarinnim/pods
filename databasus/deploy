@@ -1,0 +1,15 @@
+#! /usr/bin/bash
+
+set -e
+source ./.env
+
+mkdir -p "${DATABASUS_DATA_PATH}"
+
+export DATABASUS_URL=${DATABASUS_URL}
+export DATABASUS_PORT=${DATABASUS_PORT}
+export DATABASUS_DATA_PATH=${DATABASUS_DATA_PATH}
+
+echo "[DEPLOYING] Deploying the image as service"
+docker stack deploy --with-registry-auth \
+  --resolve-image=always \
+  --compose-file docker-compose.yml common
