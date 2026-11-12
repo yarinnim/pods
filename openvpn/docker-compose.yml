@@ -9,5 +9,7 @@ services:
       - backend
     ports:
       - "${OPENVPN_PORT}:1194/udp"
+    cap_add:
+      - NET_ADMIN
     volumes:
       - ${OPENVPN_DATA_PATH}:/etc/openvpn
