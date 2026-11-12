@@ -1,6 +1,3 @@
-networks:
-  backend:
-    driver: overlay
 services:
   openvpn:
     image: kylemanna/openvpn:latest
@@ -11,5 +8,7 @@ services:
       - "${OPENVPN_PORT}:1194/udp"
     cap_add:
       - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
     volumes:
       - ${OPENVPN_DATA_PATH}:/etc/openvpn
